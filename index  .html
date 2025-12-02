@@ -1,0 +1,289 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Surprise</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        /* --- BASIC SETTINGS --- */
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 100%); /* Purple Gradient */
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+            color: white;
+        }
+
+        /* --- CONTAINER STYLE --- */
+        .container {
+            background: rgba(255, 255, 255, 0.1); /* Halka transparent */
+            backdrop-filter: blur(15px); /* Dhundhla effect peeche */
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .hidden { display: none; }
+
+        h1 { color: #ffd700; text-shadow: 2px 2px 4px #000; margin-bottom: 10px; }
+        h2 { color: #fff; margin-bottom: 15px; text-shadow: 1px 1px 3px #000; }
+        p { font-size: 1.1rem; color: #fff; text-shadow: 1px 1px 2px #000; }
+
+        /* --- BUTTONS --- */
+        button {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+        button:hover { transform: scale(1.05); background: #ff6b81; }
+
+        input {
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            width: 80%;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        /* --- SPECIAL LETTER STYLE (CLEAR VISIBILITY) --- */
+        .letter-box {
+            background-color: #ffffff; /* Pure White Background */
+            color: #000000; /* Pure Black Text */
+            padding: 25px;
+            border-radius: 10px;
+            border: 4px solid #ffd700; /* Gold Border */
+            text-align: left;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            margin-bottom: 15px;
+        }
+        .letter-box strong {
+            color: #d63031; /* Red color for names */
+        }
+        /* --- BALLOON GAME --- */
+        .balloon {
+            position: absolute;
+            width: 50px; height: 60px;
+            background: red; border-radius: 50%;
+            cursor: pointer;
+            bottom: -100px;
+            animation: fly 6s linear infinite;
+        }
+        .balloon::before {
+            content: ''; position: absolute; bottom: -10px; left: 24px;
+            width: 2px; height: 30px; background: rgba(255,255,255,0.8);
+        }
+        @keyframes fly { to { transform: translateY(-110vh); } }
+
+        /* --- CAKE --- */
+        .cake-wrapper { cursor: pointer; margin: 30px auto; width: 150px; position: relative; }
+        .cake-base { width: 100%; height: 80px; background: #ff9ff3; border-radius: 10px; position: relative; }
+        .cake-layer { width: 100%; height: 30px; background: #feca57; position: absolute; top: 0; border-radius: 10px 10px 5px 5px; }
+        .candle { width: 10px; height: 40px; background: red; margin: -35px auto 0; position: relative; }
+        .flame { width: 15px; height: 20px; background: orange; border-radius: 50% 50% 0 0; margin: -15px auto 0; animation: flicker 0.5s infinite; }
+        @keyframes flicker { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0.8; transform: scale(1.1); } }
+
+        /* --- MEMORY GAME --- */
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+        .card {
+            background: white; height: 60px; border-radius: 5px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.8rem; cursor: pointer; color: transparent;
+            transition: 0.3s;
+        }
+        .card.flipped { background: #ffeaa7; color: black; }
+        .card.matched { background: #55efc4; color: black; visibility: hidden; }
+
+    </style>
+</head>
+<body>
+
+    <div id="screen1" class="container">
+        <h1>Welcome!</h1>
+        <p>Please enter your beautiful name:</p>
+        <input type="text" id="userName" placeholder="Your Name...">
+        <br>
+        <button onclick="startGame()">Start Surprise ❤️</button>
+    </div>
+
+    <div id="screen2" class="container hidden">
+        <h2>🎈 Pop 5 Balloons!</h2>
+        <p>Score: <span id="score" style="font-weight:bold; font-size:1.5rem;">0</span>/5</p>
+        <p style="font-size: 0.9rem;">(Click on balloons to pop them)</p>
+    </div>
+
+    <div id="screen3" class="container hidden">
+        <h2>💌 A Letter for You</h2>
+        
+        <div class="letter-box">
+            Dear <strong id="letterName">Frnd</strong>,<br><br>
+            <b>Happy Birthday! 🎂</b><br>
+            Aaj ka din bohot special hai kyunki aaj tumhara birthday hai.<br>
+            Tum hamesha khush raho aur muskurati raho.<br>
+            <br>
+            <i>Lots of wishes!</i>
+        </div>
+
+        <button onclick="nextScreen(3, 4)">Next Surprise 🎂</button>
+    </div>
+
+    <div id="screen4" class="container hidden">
+        <h2>Make a Wish!</h2>
+        <div class="cake-wrapper" onclick="cutCake()">
+            <div class="candle"><div class="flame" id="flame"></div></div>
+            <div class="cake-base"><div class="cake-layer"></div></div>
+        </div>
+        <p id="cakeMsg" style="margin-top: 20px;">Tap the Candle to Cut! 🔪</p>
+        <button id="cakeNext" class="hidden" onclick="nextScreen(4, 5)">Play Game 🎮</button>
+    </div>
+
+    <div id="screen5" class="container hidden">
+        <h2>Match Cards 🃏</h2>
+        <p>Find same pairs to win!</p>
+        <div class="grid" id="gameGrid"></div>
+    </div>
+    <div id="screen6" class="container hidden">
+        <h1 style="font-size: 2.5rem; color: #fff;">✨ <span id="finalName">Name</span> ✨</h1>
+        <h2 style="color: #ffeaa7;">Radha Krishn Bless U 🙏</h2>
+        
+        <div class="letter-box" style="text-align: center; border-color: #ff6b81;">
+            <p style="color: black; margin:0;">Ek chhota sa sawal:</p>
+            <h3 style="color: #d63031; margin: 10px 0;">Surprise kaisa laga?</h3>
+        </div>
+
+        <button onclick="location.reload()">Replay 🔄</button>
+    </div>
+
+    <script>
+        let userName = "";
+        let popCount = 0;
+
+        function nextScreen(curr, next) {
+            document.getElementById(`screen${curr}`).classList.add('hidden');
+            document.getElementById(`screen${next}`).classList.remove('hidden');
+        }
+
+        // --- STEP 1: START ---
+        function startGame() {
+            let input = document.getElementById('userName').value;
+            if(!input.trim()) { alert("Please enter name!"); return; }
+            userName = input;
+            
+            // Set Names
+            document.getElementById('letterName').innerText = userName;
+            document.getElementById('finalName').innerText = userName;
+
+            nextScreen(1, 2);
+            startBalloons();
+        }
+
+        // --- STEP 2: BALLOONS ---
+        function startBalloons() {
+            let interval = setInterval(() => {
+                if(popCount >= 5) { clearInterval(interval); return; }
+
+                let b = document.createElement('div');
+                b.className = 'balloon';
+                b.style.left = Math.random() * 90 + '%';
+                b.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 50%)`;
+                
+                b.onclick = function() {
+                    this.remove();
+                    popCount++;
+                    document.getElementById('score').innerText = popCount;
+                    if(popCount === 5) {
+                        setTimeout(() => nextScreen(2, 3), 500);
+                        // Clean up remaining balloons
+                        document.querySelectorAll('.balloon').forEach(el => el.remove());
+                    }
+                };
+                
+                document.body.appendChild(b);
+                setTimeout(() => b.remove(), 6000);
+            }, 800);
+        }
+
+        // --- STEP 4: CAKE ---
+        function cutCake() {
+            document.getElementById('flame').style.display = 'none';
+            document.getElementById('cakeMsg').innerText = "Happy Birthday! 🎉";
+            document.getElementById('cakeNext').classList.remove('hidden');
+            
+            // Simple Confetti
+            for(let i=0; i<30; i++) {
+                let c = document.createElement('div');
+                c.style.position='fixed'; c.style.top='0'; c.style.width='10px'; c.style.height='10px';
+                c.style.background=['red','yellow','blue'][Math.floor(Math.random()*3)];
+                c.style.left=Math.random()*100+'vw';
+                c.style.transition='2s';
+                document.body.appendChild(c);
+                setTimeout(()=>c.style.top='100vh',100);
+            }
+        }
+
+        // --- STEP 5: MEMORY GAME ---
+        const icons = ['🍎','🍎','🐶','🐶','🌹','🌹','🎁','🎁'];
+        let openCards = [];
+        let matched = 0;
+
+        function initGame() {
+            const grid = document.getElementById('gameGrid');
+            icons.sort(() => 0.5 - Math.random());
+            icons.forEach(icon => {
+                let card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.val = icon;
+                card.onclick = () => flip(card);
+                grid.appendChild(card);
+            });
+        }
+        
+        function flip(card) {
+            if(card.classList.contains('flipped') || openCards.length >= 2) return;
+            card.innerText = card.dataset.val;
+            card.classList.add('flipped');
+            openCards.push(card);
+            if(openCards.length === 2) setTimeout(check, 600);
+        }
+
+        function check() {
+            if(openCards[0].dataset.val === openCards[1].dataset.val) {
+                openCards[0].classList.add('matched');
+                openCards[1].classList.add('matched');
+                matched++;
+                if(matched === 4) setTimeout(() => nextScreen(5, 6), 500);
+            } else {
+                openCards[0].classList.remove('flipped');
+                openCards[0].innerText = '';
+                openCards[1].classList.remove('flipped');
+                openCards[1].innerText = '';
+            }
+            openCards = [];
+        }
+
+        initGame();
+    </script>
+</body>
+</html>
